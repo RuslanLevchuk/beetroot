@@ -24,3 +24,6 @@ git init
 git add .
 git commit -m "..."
 git push
+
+#Вивантажити у локальний репозиторій
+git pull origin main
