@@ -1,94 +1,69 @@
-matrix = [
-    ['*', 0, '*', 0, '*'],
-    [0, 0, 0, 0, 0],
-    ['*', 0, 0, '*', 0],
-    [0, 0, 0, 0, '*'],
-    ['*', 0, '*', 0, '*'],
+from random import randint
 
+MINES = 10
+MAX_ROWS = 8
+MAX_COLS = 8
+MINED = -1
+
+mines = set()
+while len(mines) != MINES:
+    x, y = randint(0, MAX_ROWS - 1), randint(0, MAX_COLS - 1)
+    mines.add((x, y))
+
+grid = [
+    [-1 if (i, j) in mines else 0
+     for j in range(MAX_COLS)]
+    for i in range(MAX_ROWS)
 ]
 
-print(matrix)
-matrix_len = len(matrix) -1
-for row_number, row_matrix in enumerate(matrix):
-    for row_position, row_symbol in enumerate(row_matrix):
-        if row_symbol == '*':#Check if current symbol in matrix is equal '*' (bomb)
-#↓↓↓↓↓↓↓↓↓↓ below we check adjacent positions for each current position of bomb '*'
-#  and add incremention (+1) to all adjacent empty positions (← → ↑ ↓ ↖ ↗ ↘ ↙)
-#######################################################################  ↓↓↓  check each horyzontal adjacent pos.
-            if row_position == 0 and row_matrix[row_position+1] != '*': # ✓ |0→| (check relative to the 0 pos on the right)
-                matrix[row_number][row_position + 1] += 1
-            elif row_position == matrix_len and row_matrix[row_position-1] != '*': # ✓ |←last|
-                matrix[row_number][row_position - 1] += 1
-            elif row_position > 0 and row_position < matrix_len:# ✓ |0←→last| (check each between 1st and last pos)
-                if row_matrix[row_position+1] != '*':       # ✓ |x→| 1іе & last pos are not included
-                    matrix[row_number][row_position + 1] += 1
-                if row_matrix[row_position-1] != '*':       # ✓ |←x| f1st & last pos are not included
-                    matrix[row_number][row_position - 1] += 1
-####################################################################### ↓↓↓  check each vertical adjacent pos.
+for x, y in mines:
+    possible_x = [i for i in range(x - 1, x + 2) if 0 <= i < MAX_ROWS]
+    possible_y = [j for j in range(y - 1, y + 2) if 0 <= j < MAX_COLS]
+    neighbours = [(x2, y2) for x2 in possible_x for y2 in possible_y]
+    neighbours.remove((x, y))
 
-            if row_number == 0 and matrix[row_number+1][row_position] != '*': # ✓ 0 pos to adjacent pos ↓
-                matrix[row_number+1][row_position] += 1
-            elif row_number == matrix_len and matrix[row_number-1][row_position] != '*': # ✓ last pos to adjacent pos ↑
-                matrix[row_number-1][row_position] += 1
-            elif row_number > 0 and row_number < matrix_len:  # ✓ other pos to adjacent pos ↑↓ (1st and last are mot included)
-                if matrix[row_number-1][row_position] != '*':# ✓  ↑
-                    matrix[row_number-1][row_position] += 1
-                if matrix[row_number+1][row_position] != '*': # ✓  ↓
-                    matrix[row_number+1][row_position] += 1
+    for row, col in neighbours:
+        if grid[row][col] != -1:
+            grid[row][col] += 1
 
-####################################################################### ↓↓↓  check each diagonal adjacent pos.
-            if row_number == 0:         #zero row corners
-                if row_position == 0 and matrix[row_number+1][row_position+1] != '*': # ✓ ↘ adjacent to left top corner
-                    matrix[row_number + 1][row_position+1] += 1
-                elif row_position == matrix_len and matrix[row_number+1][row_position-1] != '*': # ✓ ↙ adjacent to left bottom corner
-                    matrix[row_number + 1][row_position-1] += 1
-                elif row_position > 0 and row_position < matrix_len: # ↘ ↙ between left top and lebt bootom corners
-                    if matrix[row_number+1][row_position-1] != '*':
-                        matrix[row_number + 1][row_position - 1] += 1
-                    if matrix[row_number+1][row_position+1] != '*':
-                        matrix[row_number + 1][row_position + 1] += 1
+# technical print, to see all bombs
+for i in grid:
+    for it in i:
+        print(it if it == -1 else " " + str(it), end='  ')
+    print()
 
-            elif row_number == matrix_len:      #last row corners
-                if row_position == 0 and matrix[row_number-1][row_position+1] != '*': # ✓ ↗ adjacent to left bottom corner
-                    matrix[row_number - 1][row_position + 1] += 1
-                elif row_position == matrix_len and matrix[row_number-1][row_position-1] != '*':  # ✓ ↖ adjacent to reight bottom corner
-                    matrix[row_number - 1][row_position - 1] += 1
-                elif row_position > 0 and row_position < matrix_len: # ✓ ↖ ↗ adjacent to left bottom corner
-                    if matrix[row_number-1][row_position-1] != '*':
-                        matrix[row_number - 1][row_position - 1] += 1
-                    if matrix[row_number-1][row_position+1] != '*':
-                        matrix[row_number - 1][row_position + 1] += 1
+for i in range(MAX_ROWS):
+    for j in range(MAX_COLS):
+        print('X', end=' ')
+    print()
 
-            elif row_number > 0 and row_number < matrix_len: #between zero and last corners:
-                if row_position == 0: #first row
-                    if matrix[row_number - 1][row_position + 1] != '*':
-                        matrix[row_number - 1][row_position + 1] += 1
-                    if matrix[row_number + 1][row_position + 1] != '*':
-                        matrix[row_number + 1][row_position + 1] += 1
-                elif row_position == matrix_len: #last row
-                    if matrix[row_number - 1][row_position - 1] != '*':
-                        matrix[row_number - 1][row_position - 1] += 1
-                    if matrix[row_number + 1][row_position - 1] != '*':
-                        matrix[row_number + 1][row_position - 1] += 1
-                elif row_position > 0 and row_position < matrix_len: # between first and last
-                    if matrix[row_number-1][row_position-1] != '*':
-                        matrix[row_number - 1][row_position - 1] += 1
-                    if matrix[row_number-1][row_position+1] != '*':
-                        matrix[row_number - 1][row_position + 1] += 1
-                    if matrix[row_number+1][row_position-1] != '*':
-                        matrix[row_number + 1][row_position - 1] += 1
-                    if matrix[row_number+1][row_position+1] != '*':
-                        matrix[row_number + 1][row_position + 1] += 1
+user_session = dict()
+while len(user_session) != MAX_COLS * MAX_ROWS - MINES:
+    user_input = input('Give me coordinates in format row col: ')
+    row, col = user_input.split()
+    row, col = int(row), int(col)
 
+    if grid[row][col] == MINED:
+        print('Sorry you have lost')
+        break
+    else:
+        user_session[(row, col)] = True
 
-print('')
-for row in matrix:
-    for symbol in row:
-        print(symbol, end=' ')
-    print('')
+    for i in range(MAX_ROWS):
+        for j in range(MAX_COLS):
+            if (i, j) not in user_session:
+                print('X', end=' ')
+            else:
+                print(grid[i][j], end=' ')
+        print()
 
-
-print('')
-print(matrix)
-
-
+# HW
+# 1. Get index from 1
+# 2. Check input from user
+# 3. Add exit
+# 4. Add timer of the game // import time
+# 5. Extend commands and give possibility to mark mine
+# 6. Debug program if it is possible to win
+# 7. Rewrite whole program using functions
+# 8. separate in modules
+# 9. extend to start game in medium/expert mode, which is defined via sys.args variable

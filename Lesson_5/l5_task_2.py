@@ -13,5 +13,7 @@ print(f"Second random list: {list_2}")
 
 print(f"Unique elements in both lists via symmetric_defference: {list(set(list_1).symmetric_difference(set(list_2)))}")
 
-print(f"Unique elements in both lists via XOR operator: {list(set(list_1) ^ set(list_2))}")
+list_3 = list(set(list_1) ^ set(list_2))
+
+print(f"Unique elements in both lists via XOR operator: {list_3}")
 
