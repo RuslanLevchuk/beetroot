@@ -9,6 +9,7 @@ matrix = []
 #temporary
 matrix_size = 5
 bombs = 10
+bombs_found = 0
 mark_bomb = False
 empty_cells = 0
 detected_bombs = 0
@@ -26,6 +27,7 @@ def start_settings():
     global matrix_len
     global game_started_flag
     global bombs
+    global bombs_found
 
     print("Type size of map (min: 5 | max: 20). \nIf your input will be out of range, "
               "size of map will be selected automatically.")
@@ -34,12 +36,16 @@ def start_settings():
         matrix_size = input("Map size: ")
         try:
             matrix_size = int(matrix_size)
+
             if matrix_size < 5:
                 matrix_size = 5
                 print("You have selected a map size less than 5, so it is automatically selected as the smallest size 5")
             elif matrix_size > 20:
                 matrix_size = 20
                 print("You have selected a map size more than 20, so it is automatically selected as the biggest size 20")
+            #reset all values after previous game
+            bombs = matrix_size * 2
+            bombs_found = 0
             score = 0
             lives = 5
             empty_cells = 0
@@ -47,18 +53,21 @@ def start_settings():
             user_matrix = []
             matrix = []
             matrix_len = matrix_size - 1
-            bombs = matrix_size*2
+
             break
         except ValueError:
             print("Your input must have only digits, try again!")
+    #after getting mapsize from user game_started_flag becomes "True", it means game is able to start
     game_started_flag = True
-    prepare_hidden_infomap(matrix)
+    #generate maps
+    prepare_maps(matrix)
 
 
-
-def prepare_hidden_infomap(matrix):
+#generate user map and map with bombs
+def prepare_maps(matrix):
     global empty_cells
     global matrix_size
+    global bombs
 
 
     # prepare hiden empty infomap with 0 in each cell
@@ -69,8 +78,17 @@ def prepare_hidden_infomap(matrix):
 
 
     #adding bombs in empty infomap (matrix)
-    for i in range(bombs):
-        matrix[random.randint(0, matrix_len)][random.randint(0, matrix_len)] = '*'
+    bomb_added = 0
+    while 1:
+        row_random = random.randint(0, matrix_len)
+        col_random = random.randint(0, matrix_len)
+        if matrix[row_random][col_random] == 0:
+            matrix[row_random][col_random] = '*'
+            bomb_added += 1
+        if bomb_added == bombs:
+            break
+
+
     for row in matrix:
         for cell in row:
             if cell == 0:
@@ -156,43 +174,45 @@ def prepare_hidden_infomap(matrix):
 
 def print_map(map_size, mtrx):
     global matrix_len
+    borders = ['╔', '╚', '╗', '╝', '═', '║'] # define borders for drawing maps
+    coordinates_digit = list(range(1, 26)) # define list of numbers for draw row titles of map (1, 2, 3..)
 
-    borders = ['╔', '╚', '╗', '╝', '═', '║']
 
-    coordinates_digit = list(range(1, 26))
-    print('')
     print('    ', end='')
-    for i in range(map_size):
+    for i in range(map_size): #draw coordinete signs (a, b, c, d ...)
         print(f"{coocrdinates_symb[i]}  ", end='')
     print('')
+    print(f"  {borders[0]}", end='') # draw left top corner symbol
 
-    print(f"  {borders[0]}", end='')
-    for i in range(map_size*3):
+    for i in range(map_size*3): # draw top border
         print(borders[4], end='')
-    print(borders[2])
+    print(borders[2]) # draw left right corner symbol
 
     for r_num, row in enumerate(mtrx):
         if r_num<9:
+            # if left coordinate digits are double-symbols: whitespace  is single end (else is double)
             print(coordinates_digit[r_num], end=' ') #print left coordinates digits
         else:
             print(coordinates_digit[r_num], end='')
-        print(borders[5], end=' ') # prin left border
-        for num, symbol in enumerate(row):
+        print(borders[5], end=' ')  # prin left border
+        for num, symbol in enumerate(row): # print map content
             if num == matrix_len:
-                print(symbol, end=' ')
+                print(symbol, end=' ') # pint whitespaces between each cell
             else:
-                print(symbol, end='  ')
+                print(symbol, end='  ') # print longer whitespace before right border
         print(borders[5], end='')  #print right border
-        if r_num == 0:
+        if r_num == 0:   #printing game statistics
             print(f" {coordinates_digit[r_num]}    | LIVES: {lives}")
         elif r_num == 1:
             print(f" {coordinates_digit[r_num]}    | SCORE: {score}")
         elif r_num == 2:
             print(f" {coordinates_digit[r_num]}    | EMPTY CELLS TO OPEN: {empty_cells}")
+        elif r_num == 3:
+            print(f" {coordinates_digit[r_num]}    | BOMBS FOUND: {bombs_found}/{bombs}")
         else:
             print(f" {coordinates_digit[r_num]} ")
 
-
+#printing bootom borders and coordinete signs
     print(f"  {borders[1]}", end='')
     for i in range(map_size*3):
         print(borders[4], end='')
@@ -200,9 +220,9 @@ def print_map(map_size, mtrx):
     print('    ', end='')
     for i in range(map_size):
         print(f"{coocrdinates_symb[i]}  ", end='')
-    print('')
 
 
+#command deploy and command reactions
 def make_shot(coordinate):
     global lives
     global score
@@ -210,61 +230,103 @@ def make_shot(coordinate):
     global user_matrix
     global mark_bomb
     global detected_bombs
+    global bombs_found
+    user_row = 0
+    #get coodinate in fomat "1a" etc or "1a*" ets
     coordinate = list(coordinate)
-
+    #if coommand length is shorter or longer, function returns 'incorrect'
     if len(coordinate)>4 or len(coordinate)<2:
         return 'incorrect'
 
-    if coordinate[len(coordinate)-1] == '*': #Перевірка чи є позначка * в кінці
-        mark_bomb = True
-        coordinate.pop(len(coordinate)-1)
-    if coordinate[len(coordinate)-1].lower() in coocrdinates_symb[0:matrix_size]: #перевірка чи є літера в кінці
+    if coordinate[len(coordinate)-1] == '*': #check if symbol * available in command
+        mark_bomb = True #value True means we mark flag on map
+        coordinate.pop(len(coordinate)-1) #delete symbol * in end of comand
+    # check if symbol is in coordinates alphabet
+    if coordinate[len(coordinate)-1].lower() in coocrdinates_symb[0:matrix_size]:
+        #define column coordinate in digit format
         user_col = coocrdinates_symb.index(coordinate[len(coordinate)-1].lower())
-        print(user_col, end=' ')
     else:
-        print('*')
         return 'incorrect'
+    #check if one or two symbols are digits and calculate row coordinate from them
     if coordinate[0].isdigit() and coordinate[1].isdigit():
         user_row = int(coordinate[0])*10 + int(coordinate[1])-1
     elif coordinate[0].isdigit():
         user_row = int(coordinate[0])-1
     if user_row > matrix_size:
         return 'incorrect'
-    print(user_row, end='')
+    #return doubleshot if we have olready opened that coordinates
+    if user_matrix[user_row][user_col] != 'x':
+        return 'doubleshot'
+    # if in chosen cell there is * (bomb), than checks other statements
     if matrix[user_row][user_col] == '*':
+        #if user input has *, it means program must mark cell as cell with bomb
+        # if there was a bomb, program congrads user and add's +5 to score
         if mark_bomb == True:
             user_matrix[user_row][user_col] = symbol_flag
             score += 5
-            mark_bomb = False
+            bombs_found += 1
+            mark_bomb = False #reset bomb flag
             print('YOU FOUND A BOMB!')
+        # if user input was without *, it means user lose, bomb explodes and lives become one less
         elif mark_bomb == False:
-            user_matrix[user_row][user_col] = '◌'
+            user_matrix[user_row][user_col] = '◌' #bobmb exploding
             lives -= 1
+            bombs_found += 1
             print('LOSE!')
     else:
-        user_matrix[user_row][user_col] = matrix[user_row][user_col]
-        score += 1
-        print('HUH!')
-
+        # if there no bomb in cell and user marks it as cell with bomb, than there nothing does
+        if mark_bomb == True:
+            user_matrix[user_row][user_col] = symbol_flag
+            mark_bomb = False
+            print('There no bomb...')
+        #if command without * mark, and threre no bomb, than cell just opens and score increases on 1
+        else:
+            user_matrix[user_row][user_col] = matrix[user_row][user_col]
+            score += 1
+            print('HUH!')
 
 
 while True:
+    #if there no lives, user can restart or end game
     if lives == 0:
         while 1:
             choice = input("GAME OVER! Restart? (y/n): ")
             if choice.lower() == 'y':
                 start_settings()
+                break
             elif choice.lower() == 'n':
                 break
             else:
                 print('Incorrect input!')
                 pass
+    if bombs == bombs_found:
+        while 1:
+            choice = input(f"YOU WIN!! You fond {bombs_found - 5 - lives} bombs "
+                           f"and Your score is {score} \nRestart? (y/n): ")
+            if choice.lower() == 'y':
+                start_settings()
+                break
+            elif choice.lower() == 'n':
+                break
+            else:
+                print('Incorrect input!')
+                pass
+
+    # runs on the start of program when initial state of flag is False
     if game_started_flag == False:
         start_settings()
-    print_map(matrix_size, matrix)
+    #uncomment to see real map with bombs
+    #print_map(matrix_size, matrix)
+    #printing of map
     print_map(matrix_size, user_matrix)
+    #asking for coordinates
     user_coordinate = input("\nType coordinate (for example '2c') to make a shot or add symbol '*'(for example '2c*') in the end "
                             "to mark a bomb. \nInput your data =>  ")
-    if make_shot(user_coordinate) == "incorrect":
+    # give coordinate command to make shot
+    shot_request = make_shot(user_coordinate)
+    #check requests from function "make_shot"
+    if shot_request == "incorrect":
         print('Input is not correct')
+    elif shot_request == 'doubleshot':
+        print('These coordinates are already opened...')
 
