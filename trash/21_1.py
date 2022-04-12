@@ -1,5 +1,6 @@
-hi = list('k*')
-
-symbol = hi.pop(1)
-sy = str(hi)
-print(sy)
+try:
+    r = 2/0
+except:
+    pass
+finally:
+    print('hi')
