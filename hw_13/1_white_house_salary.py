@@ -136,3 +136,6 @@ print('==================================================')
 print(Employee.assistants_report())
 print(e.sum_salary(e))
 print(e.avg_salary(e))
+
+
+#====================
