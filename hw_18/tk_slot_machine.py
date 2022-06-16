@@ -38,10 +38,6 @@ top_frame.grid(row=0, column=1, sticky=(tk.N, tk.S, tk.E, tk.W))
 play_btn = tk.Button(main, text='PLAY!', command=generate)
 play_btn.grid(row=1, column=1, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-top_frame.columnconfigure(0, weight=1)
-top_frame.columnconfigure(1, weight=1)
-top_frame.columnconfigure(2, weight=1)
-
 symbols = tk.Label(top_frame, bg='grey', text=''.join(result), font=('', 100))
 symbols.pack()
 
