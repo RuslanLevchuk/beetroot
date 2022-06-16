@@ -1,0 +1,345 @@
+vik@deku:~/poligon$ svn checkout file:///home/vik/poligon/u1
+svn: E170013: Unable to connect to a repository at URL 'file:///home/vik/poligon/u1'
+svn: E180001: Unable to open repository 'file:///home/vik/poligon/u1'
+vik@deku:~/poligon$ svn checkout file:///home/vik/poligon/srv u1
+Checked out revision 0.
+vik@deku:~/poligon$ cd srv
+vik@deku:~/poligon/srv$ ls
+conf  db  format  hooks  locks  README.txt
+vik@deku:~/poligon/srv$ cd ..
+vik@deku:~/poligon$ svn checkout^Cttp://srv.com/rep user1
+vik@deku:~/poligon$ cd u1
+vik@deku:~/poligon/u1$ ls
+vik@deku:~/poligon/u1$ dir
+vik@deku:~/poligon/u1$ ls -al
+итого 12
+drwxr-xr-x 3 vik vik 4096 мая 21 11:40 .
+drwxr-xr-x 4 vik vik 4096 мая 21 11:40 ..
+drwxr-xr-x 4 vik vik 4096 мая 21 11:40 .svn
+vik@deku:~/poligon/u1$ svn status
+?       new.txt
+vik@deku:~/poligon/u1$ svn add new.txt 
+A         new.txt
+vik@deku:~/poligon/u1$ svn propset svn:mime-type text/txt *
+property 'svn:mime-type' set on 'new.txt'
+vik@deku:~/poligon/u1$ svn status
+A       new.txt
+vik@deku:~/poligon/u1$ svn log
+------------------------------------------------------------------------
+vik@deku:~/poligon/u1$ svn commit -m "New commint"
+Adding         new.txt
+Transmitting file data .done
+Committing transaction...
+Committed revision 1.
+vik@deku:~/poligon/u1$ svn log
+------------------------------------------------------------------------
+vik@deku:~/poligon/u1$ svn update
+Updating '.':
+At revision 1.
+vik@deku:~/poligon/u1$ svn log
+------------------------------------------------------------------------
+r1 | vik | 2022-05-21 11:58:06 +0300 (Сб, 21 мая 2022) | 1 line
+
+New commint
+------------------------------------------------------------------------
+vik@deku:~/poligon/u1$ svn status
+M       new.txt
+vik@deku:~/poligon/u1$ svn diff
+Index: new.txt
+===================================================================
+--- new.txt	(revision 1)
++++ new.txt	(working copy)
+@@ -1 +1,2 @@
+ Hello!
++I'm Viktor Boiko!
+vik@deku:~/poligon/u1$ svn commit -m "Добавил еще одну строку"
+Sending        new.txt
+Transmitting file data .done
+Committing transaction...
+Committed revision 2.
+vik@deku:~/poligon/u1$ svn status
+vik@deku:~/poligon/u1$ svn update
+Updating '.':
+At revision 2.
+vik@deku:~/poligon/u1$ svn log
+------------------------------------------------------------------------
+r2 | vik | 2022-05-21 12:02:31 +0300 (Сб, 21 мая 2022) | 1 line
+
+Добавил еще одну строку
+------------------------------------------------------------------------
+r1 | vik | 2022-05-21 11:58:06 +0300 (Сб, 21 мая 2022) | 1 line
+
+New commint
+------------------------------------------------------------------------
+vik@deku:~/poligon/u1$ svn status
+M       new.txt
+vik@deku:~/poligon/u1$ svn diff
+Index: new.txt
+===================================================================
+--- new.txt	(revision 2)
++++ new.txt	(working copy)
+@@ -1,2 +1 @@
+-Hello!
+ I'm Viktor Boiko!
+vik@deku:~/poligon/u1$ svn commit -m "пример удаления"
+Sending        new.txt
+Transmitting file data .done
+Committing transaction...
+Committed revision 3.
+vik@deku:~/poligon/u1$ svn log
+------------------------------------------------------------------------
+r2 | vik | 2022-05-21 12:02:31 +0300 (Сб, 21 мая 2022) | 1 line
+
+Добавил еще одну строку
+------------------------------------------------------------------------
+r1 | vik | 2022-05-21 11:58:06 +0300 (Сб, 21 мая 2022) | 1 line
+
+New commint
+------------------------------------------------------------------------
+vik@deku:~/poligon/u1$ svn update
+Updating '.':
+At revision 3.
+vik@deku:~/poligon/u1$ svn log
+------------------------------------------------------------------------
+r3 | vik | 2022-05-21 12:04:58 +0300 (Сб, 21 мая 2022) | 1 line
+
+пример удаления
+------------------------------------------------------------------------
+r2 | vik | 2022-05-21 12:02:31 +0300 (Сб, 21 мая 2022) | 1 line
+
+Добавил еще одну строку
+------------------------------------------------------------------------
+r1 | vik | 2022-05-21 11:58:06 +0300 (Сб, 21 мая 2022) | 1 line
+
+New commint
+------------------------------------------------------------------------
+vik@deku:~/poligon/u1$ svn status
+M       new.txt
+vik@deku:~/poligon/u1$ svn diff
+Index: new.txt
+===================================================================
+--- new.txt	(revision 3)
++++ new.txt	(working copy)
+@@ -1 +1 @@
+-I'm Viktor Boiko!
++I'm user!
+vik@deku:~/poligon/u1$ svn diff
+Index: new.txt
+===================================================================
+--- new.txt	(revision 3)
++++ new.txt	(working copy)
+@@ -1 +1 @@
+-I'm Viktor Boiko!
++I'm user!
+vik@deku:~/poligon/u1$ svn status
+M       new.txt
+?       white_house_2017_salaries_com_other.csv
+?       white_house_2017_salaries_com_other.ods
+vik@deku:~/poligon/u1$ svn status
+M       new.txt
+vik@deku:~/poligon/u1$ svn diff
+Index: new.txt
+===================================================================
+--- new.txt	(revision 3)
++++ new.txt	(working copy)
+@@ -1 +1 @@
+-I'm Viktor Boiko!
++I'm user!
+vik@deku:~/poligon/u1$ svn commit -m "пример изменения строки"
+Sending        new.txt
+Transmitting file data .done
+Committing transaction...
+Committed revision 4.
+vik@deku:~/poligon/u1$ svn up
+Updating '.':
+At revision 4.
+vik@deku:~/poligon/u1$ svn log
+------------------------------------------------------------------------
+r4 | vik | 2022-05-21 12:07:41 +0300 (Сб, 21 мая 2022) | 1 line
+
+пример изменения строки
+------------------------------------------------------------------------
+r3 | vik | 2022-05-21 12:04:58 +0300 (Сб, 21 мая 2022) | 1 line
+
+пример удаления
+------------------------------------------------------------------------
+r2 | vik | 2022-05-21 12:02:31 +0300 (Сб, 21 мая 2022) | 1 line
+
+Добавил еще одну строку
+------------------------------------------------------------------------
+r1 | vik | 2022-05-21 11:58:06 +0300 (Сб, 21 мая 2022) | 1 line
+
+New commint
+------------------------------------------------------------------------
+vik@deku:~/poligon/u1$ svn status
+?       1.py
+vik@deku:~/poligon/u1$ svn add 1.py 
+A         1.py
+vik@deku:~/poligon/u1$ svn propset svn:mime-type text/txt *
+property 'svn:mime-type' set on '1.py'
+property 'svn:mime-type' set on 'new.txt'
+vik@deku:~/poligon/u1$ svn status
+A       1.py
+vik@deku:~/poligon/u1$ svn commit -m "добавили питон"
+Adding         1.py
+Transmitting file data .done
+Committing transaction...
+Committed revision 5.
+vik@deku:~/poligon/u1$ svn up
+Updating '.':
+At revision 5.
+vik@deku:~/poligon/u1$ svn log
+------------------------------------------------------------------------
+r5 | vik | 2022-05-21 12:11:00 +0300 (Сб, 21 мая 2022) | 1 line
+
+добавили питон
+------------------------------------------------------------------------
+r4 | vik | 2022-05-21 12:07:41 +0300 (Сб, 21 мая 2022) | 1 line
+
+пример изменения строки
+------------------------------------------------------------------------
+r3 | vik | 2022-05-21 12:04:58 +0300 (Сб, 21 мая 2022) | 1 line
+
+пример удаления
+------------------------------------------------------------------------
+r2 | vik | 2022-05-21 12:02:31 +0300 (Сб, 21 мая 2022) | 1 line
+
+Добавил еще одну строку
+------------------------------------------------------------------------
+r1 | vik | 2022-05-21 11:58:06 +0300 (Сб, 21 мая 2022) | 1 line
+
+New commint
+------------------------------------------------------------------------
+vik@deku:~/poligon/u1$ cd ..
+vik@deku:~/poligon$ ls
+srv  u1
+vik@deku:~/poligon$ svn checkout file:///home/vik/poligon/srv u2
+A    u2/1.py
+A    u2/new.txt
+Checked out revision 5.
+vik@deku:~/poligon$ svn
+Type 'svn help' for usage.
+vik@deku:~/poligon$ svn status
+svn: warning: W155007: '/home/vik/poligon' is not a working copy
+vik@deku:~/poligon$ cd u1
+vik@deku:~/poligon/u1$ svn status
+vik@deku:~/poligon/u1$ cd ..
+vik@deku:~/poligon$ cd u2
+vik@deku:~/poligon/u2$ svn status
+M       1.py
+?       2.py
+vik@deku:~/poligon/u2$ svn add 2.py 
+A         2.py
+vik@deku:~/poligon/u2$ svn status
+M       1.py
+A       2.py
+vik@deku:~/poligon/u2$ svn commit -m "добавили 2.py поменяли 1.py"
+Sending        1.py
+Adding         2.py
+Transmitting file data ..done
+Committing transaction...
+Committed revision 6.
+vik@deku:~/poligon/u2$ git ups
+git: «ups» не является командой git. Смотрите «git --help».
+
+Самые похожие команды:
+	push
+vik@deku:~/poligon/u2$ git update
+git: «update» не является командой git. Смотрите «git --help».
+
+Самые похожие команды:
+	update-ref
+vik@deku:~/poligon/u2$ svn update
+Updating '.':
+At revision 6.
+vik@deku:~/poligon/u2$ svn log
+------------------------------------------------------------------------
+r6 | vik | 2022-05-21 12:16:54 +0300 (Сб, 21 мая 2022) | 1 line
+
+добавили 2.py поменяли 1.py
+------------------------------------------------------------------------
+r5 | vik | 2022-05-21 12:11:00 +0300 (Сб, 21 мая 2022) | 1 line
+
+добавили питон
+------------------------------------------------------------------------
+r4 | vik | 2022-05-21 12:07:41 +0300 (Сб, 21 мая 2022) | 1 line
+
+пример изменения строки
+------------------------------------------------------------------------
+r3 | vik | 2022-05-21 12:04:58 +0300 (Сб, 21 мая 2022) | 1 line
+
+пример удаления
+------------------------------------------------------------------------
+r2 | vik | 2022-05-21 12:02:31 +0300 (Сб, 21 мая 2022) | 1 line
+
+Добавил еще одну строку
+------------------------------------------------------------------------
+r1 | vik | 2022-05-21 11:58:06 +0300 (Сб, 21 мая 2022) | 1 line
+
+New commint
+------------------------------------------------------------------------
+vik@deku:~/poligon/u2$ cd ..
+vik@deku:~/poligon$ cd u1
+vik@deku:~/poligon/u1$ svn status
+vik@deku:~/poligon/u1$ ls
+1.py  new.txt
+vik@deku:~/poligon/u1$ svn log
+------------------------------------------------------------------------
+r5 | vik | 2022-05-21 12:11:00 +0300 (Сб, 21 мая 2022) | 1 line
+
+добавили питон
+------------------------------------------------------------------------
+r4 | vik | 2022-05-21 12:07:41 +0300 (Сб, 21 мая 2022) | 1 line
+
+пример изменения строки
+------------------------------------------------------------------------
+r3 | vik | 2022-05-21 12:04:58 +0300 (Сб, 21 мая 2022) | 1 line
+
+пример удаления
+------------------------------------------------------------------------
+r2 | vik | 2022-05-21 12:02:31 +0300 (Сб, 21 мая 2022) | 1 line
+
+Добавил еще одну строку
+------------------------------------------------------------------------
+r1 | vik | 2022-05-21 11:58:06 +0300 (Сб, 21 мая 2022) | 1 line
+
+New commint
+------------------------------------------------------------------------
+vik@deku:~/poligon/u1$ ls
+1.py  new.txt
+vik@deku:~/poligon/u1$ svn update
+Updating '.':
+U    1.py
+A    2.py
+Updated to revision 6.
+vik@deku:~/poligon/u1$ ls
+1.py  2.py  new.txt
+vik@deku:~/poligon/u1$ svn status
+vik@deku:~/poligon/u1$ ls
+1.py  2.py  new.txt
+vik@deku:~/poligon/u1$ svn log
+------------------------------------------------------------------------
+r6 | vik | 2022-05-21 12:16:54 +0300 (Сб, 21 мая 2022) | 1 line
+
+добавили 2.py поменяли 1.py
+------------------------------------------------------------------------
+r5 | vik | 2022-05-21 12:11:00 +0300 (Сб, 21 мая 2022) | 1 line
+
+добавили питон
+------------------------------------------------------------------------
+r4 | vik | 2022-05-21 12:07:41 +0300 (Сб, 21 мая 2022) | 1 line
+
+пример изменения строки
+------------------------------------------------------------------------
+r3 | vik | 2022-05-21 12:04:58 +0300 (Сб, 21 мая 2022) | 1 line
+
+пример удаления
+------------------------------------------------------------------------
+r2 | vik | 2022-05-21 12:02:31 +0300 (Сб, 21 мая 2022) | 1 line
+
+Добавил еще одну строку
+------------------------------------------------------------------------
+r1 | vik | 2022-05-21 11:58:06 +0300 (Сб, 21 мая 2022) | 1 line
+
+New commint
+------------------------------------------------------------------------
