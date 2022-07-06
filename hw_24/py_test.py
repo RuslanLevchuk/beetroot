@@ -10,5 +10,4 @@ def test_something_2():
     assert converter('52F') == (11, 'C', '11C')
 
 def test_unittest():
-    a = TempConvTest
-    a.test_value_error
+    TempConvTest
