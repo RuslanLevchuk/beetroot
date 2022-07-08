@@ -1,0 +1,447 @@
+1:
+sqlite> .tables
+albums          employees       invoices        playlists     
+artists         genres          media_types     tracks        
+customers       invoice_items   playlist_track
+=====================================================================================
+2:
+sqlite> select * from customers;
+1|Luís|Gonçalves|Embraer - Empresa Brasileira de Aeronáutica S.A.|Av. Brigadeiro Faria Lima, 2170|São José dos Campos|SP|Brazil|12227-000|+55 (12) 3923-5555|+55 (12) 3923-5566|luisg@embraer.com.br|3
+2|Leonie|Köhler||Theodor-Heuss-Straße 34|Stuttgart||Germany|70174|+49 0711 2842222||leonekohler@surfeu.de|5
+....
+58|Manoj|Pareek||12,Community Centre|Delhi||India|110017|+91 0124 39883988||manoj.pareek@rediff.com|3
+59|Puja|Srivastava||3,Raj Bhavan Road|Bangalore||India|560001|+91 080 22289999||puja_srivastava@yahoo.in|3
+=====================================================================================
+3:
+sqlite> select * from customers limit 5;
+1|Luís|Gonçalves|Embraer - Empresa Brasileira de Aeronáutica S.A.|Av. Brigadeiro Faria Lima, 2170|São José dos Campos|SP|Brazil|12227-000|+55 (12) 3923-5555|+55 (12) 3923-5566|luisg@embraer.com.br|3
+2|Leonie|Köhler||Theodor-Heuss-Straße 34|Stuttgart||Germany|70174|+49 0711 2842222||leonekohler@surfeu.de|5
+3|François|Tremblay||1498 rue Bélanger|Montréal|QC|Canada|H2G 1A7|+1 (514) 721-4711||ftremblay@gmail.com|3
+4|Bjørn|Hansen||Ullevålsveien 14|Oslo||Norway|0171|+47 22 44 22 22||bjorn.hansen@yahoo.no|4
+5|František|Wichterlová|JetBrains s.r.o.|Klanova 9/506|Prague||Czech Republic|14700|+420 2 4172 5555|+420 2 4172 5555|frantisekw@jetbrains.com|4
+=====================================================================================
+4:
+sqlite> .schema customers #Спочатку дізнався назви полів
+
+#Тепер робимо селект
+sqlite> select FirstName, LastName, Address from customers limit 5;
+Luís|Gonçalves|Av. Brigadeiro Faria Lima, 2170
+Leonie|Köhler|Theodor-Heuss-Straße 34
+François|Tremblay|1498 rue Bélanger
+Bjørn|Hansen|Ullevålsveien 14
+František|Wichterlová|Klanova 9/506
+=====================================================================================
+5:
+.mode + параметр дає змогу виводити попередньо форматовані дані залежно від нашої потреби.. наприкладЖ
+sqlite> .mode html
+виводить нам дані, теговані у хтмл-таблицю:
+sqlite> select FirstName, LastName, Address from customers limit 5;
+<TR><TD>Luís</TD>
+<TD>Gonçalves</TD>
+<TD>Av. Brigadeiro Faria Lima, 2170</TD>
+</TR>
+....
+...
+я залишив собі у стовпчик (6й пункт - done): 
+sqlite> .mode column
+Luís        Gonçalves   Av. Brigadeiro Faria Lima, 2170
+Leonie      Köhler      Theodor-Heuss-Straße 34        
+François    Tremblay    1498 rue Bélanger              
+Bjørn       Hansen      Ullevålsveien 14               
+František   Wichterlov  Klanova 9/50
+=====================================================================================
+6: 
+див. вище
+=====================================================================================
+7:                  
+sqlite> select FirstName, LastName, Address from customers limit 15;
+Luís        Gonçalves   Av. Brigadeiro Faria Lima, 2170
+Leonie      Köhler      Theodor-Heuss-Straße 34        
+François    Tremblay    1498 rue Bélanger              
+Bjørn       Hansen      Ullevålsveien 14               
+František   Wichterlov  Klanova 9/506                  
+Helena      Holý        Rilská 3174/6                  
+Astrid      Gruber      Rotenturmstraße 4, 1010 Innere 
+Daan        Peeters     Grétrystraat 63                
+Kara        Nielsen     Sønder Boulevard 51            
+Eduardo     Martins     Rua Dr. Falcão Filho, 155      
+Alexandre   Rocha       Av. Paulista, 2022             
+Roberto     Almeida     Praça Pio X, 119               
+Fernanda    Ramos       Qe 7 Bloco G                   
+Mark        Philips     8210 111 ST NW                 
+Jennifer    Peterson    700 W Pender Street       
+=====================================================================================
+8,9:
+box, table modes
+The following output modes are only available in SQLite 3.33.0 (released on 14 August 2020) and later.
+це стосується режимів таблиці і коробки... мусив оновлювати версію на свіжішу
+тут пару моментів: після скачування, комплювання і установки свіжої версії субд в терміналі перестає працювати зчитування з кнопок вгору/вниз/вліво/вправо: малює ^[[A, ^[[D..... жесть як не зручно, коли тре виконати якусь останню команду чи пострибати курсором по рядку...
+Тому перед мейком тре виконати:
+ ./configure --enable-readline --prefix=/usr/local
+а далі 
+make
+make install
+... вбив зодві години через цей бокс мод))
+sqlite> .mode box
+sqlite> select FirstName, LastName, Address from customers limit 3;
+┌───────────┬─────────────┬──────────────────────────────────────┐
+│ FirstName │  LastName   │               Address                │
+├───────────┼─────────────┼──────────────────────────────────────┤
+│ Luís      │ Gonçalves   │ Av. Brigadeiro Faria Lima, 2170      │
+│ Leonie    │ Köhler      │ Theodor-Heuss-Straße 34              │
+│ François  │ Tremblay    │ 1498 rue Bélanger                    │
+└───────────┴─────────────┴──────────────────────────────────────┘
+=====================================================================================
+10,11:
+list
+повимахувався і поміняв сепаратор:
+sqlite> .mode list
+sqlite> .separator '  |  '
+sqlite> select Country, FirstName, LastName from customers limit 11 offset 29;
+Canada  |  Edward  |  Francis
+Canada  |  Martha  |  Silk
+Canada  |  Aaron  |  Mitchell
+Canada  |  Ellie  |  Sullivan
+Portugal  |  João  |  Fernandes
+Portugal  |  Madalena  |  Sampaio
+Germany  |  Hannah  |  Schneider
+Germany  |  Fynn  |  Zimmermann
+Germany  |  Niklas  |  Schröder
+France  |  Camille  |  Bernard
+France  |  Dominique  |  Lefebvr
+offset ріже включно, тому, щоб відобразити з 30го, офсет тре було поставити 29
+=====================================================================================
+12, 13:
+sqlite> .mode csv
+sqlite> select FirstName, LastName, Country from customers order by Country limit 15;
+Diego,"Gutiérrez",Argentina
+Mark,Taylor,Australia
+Astrid,Gruber,Austria
+Daan,Peeters,Belgium
+"Luís","Gonçalves",Brazil
+Eduardo,Martins,Brazil
+Alexandre,Rocha,Brazil
+Roberto,Almeida,Brazil
+Fernanda,Ramos,Brazil
+"François",Tremblay,Canada
+Mark,Philips,Canada
+Jennifer,Peterson,Canada
+Robert,Brown,Canada
+Edward,Francis,Canada
+Martha,Silk,Canada
+=====================================================================================
+14,15:
+sqlite> .mode json
+sqlite> select CustomerId, FirstName, LastName, Country from customers limit 13;
+[{"CustomerId":1,"FirstName":"Luís","LastName":"Gonçalves","Country":"Brazil"},
+{"CustomerId":2,"FirstName":"Leonie","LastName":"Köhler","Country":"Germany"},
+{"CustomerId":3,"FirstName":"François","LastName":"Tremblay","Country":"Canada"},
+...
+{"CustomerId":12,"FirstName":"Roberto","LastName":"Almeida","Country":"Brazil"},
+{"CustomerId":13,"FirstName":"Fernanda","LastName":"Ramos","Country":"Brazil"}]
+
+=====================================================================================
+16,17:
+sqlite> .mode markdown
+sqlite> select CustomerId, FirstName, LastName, Country from customers limit 20;
+| CustomerId | FirstName |  LastName   |    Country     |
+|------------|-----------|-------------|----------------|
+| 1          | Luís      | Gonçalves   | Brazil         |
+.
+.
+.  |
+| 17         | Jack      | Smith       | USA            |
+| 18         | Michelle  | Brooks      | USA            |
+| 19         | Tim       | Goyer       | USA            |
+| 20         | Dan       | Miller      | USA            |
+
+=====================================================================================
+18,19:
+sqlite> .mode table
+sqlite> select CustomerId, FirstName, LastName, Country from customers limit 30;
++------------+-----------+-------------+----------------+
+| CustomerId | FirstName |  LastName   |    Country     |
++------------+-----------+-------------+----------------+
+| 1          | Luís      | Gonçalves   | Brazil         |
+| 2          | Leonie    | Köhler      | Germany        |
+| 3          | François  | Tremblay    | Canada         |
+.
+.
+.
+| 29         | Robert    | Brown       | Canada         |
+| 30         | Edward    | Francis     | Canada         |
++------------+-----------+-------------+----------------+
+
+=====================================================================================
+20, 21:
+sqlite> .mode box
+sqlite> select CustomerId, FirstName, LastName, Country from customers order by FirstName limit 30;
+┌────────────┬───────────┬──────────────┬────────────────┐
+│ CustomerId │ FirstName │   LastName   │    Country     │
+├────────────┼───────────┼──────────────┼────────────────┤
+│ 32         │ Aaron     │ Mitchell     │ Canada         │
+│ 11         │ Alexandre │ Rocha        │ Brazil         │
+│ 7          │ Astrid    │ Gruber       │ Austria        │
+.
+.
+.
+│ 17         │ Jack      │ Smith        │ USA            │
+│ 15         │ Jennifer  │ Peterson     │ Canada         │
+│ 51         │ Joakim    │ Johansson    │ Sweden         │
+│ 48         │ Johannes  │ Van der Berg │ Netherlands    │
+│ 23         │ John      │ Gordon       │ USA            │
+└────────────┴───────────┴──────────────┴────────────────┘
+=====================================================================================
+22:
+sqlite> select CustomerId, FirstName, LastName, Country from customers order by Country limit 20;
+┌────────────┬───────────┬─────────────┬────────────────┐
+│ CustomerId │ FirstName │  LastName   │    Country     │
+├────────────┼───────────┼─────────────┼────────────────┤
+│ 56         │ Diego     │ Gutiérrez   │ Argentina      │
+│ 55         │ Mark      │ Taylor      │ Australia      │
+│ 7          │ Astrid    │ Gruber      │ Austria        │
+│ 8          │ Daan      │ Peeters     │ Belgium        │
+│ 1          │ Luís      │ Gonçalves   │ Brazil         │
+│ 10         │ Eduardo   │ Martins     │ Brazil         │
+.
+.
+.
+│ 57         │ Luis      │ Rojas       │ Chile          │
+│ 5          │ František │ Wichterlová │ Czech Republic │
+│ 6          │ Helena    │ Holý        │ Czech Republic │
+└────────────┴───────────┴─────────────┴────────────────┘
+=====================================================================================
+23:
+sqlite> select CustomerId, FirstName, LastName, Country from customers where Country like 'India' order by FirstName;
+┌────────────┬───────────┬────────────┬─────────┐
+│ CustomerId │ FirstName │  LastName  │ Country │
+├────────────┼───────────┼────────────┼─────────┤
+│ 58         │ Manoj     │ Pareek     │ India   │
+│ 59         │ Puja      │ Srivastava │ India   │
+└────────────┴───────────┴────────────┴─────────┘
+=====================================================================================
+24:
+sqlite> select CustomerId, FirstName, LastName, Country from customers where Country like 'brazil' order by LastName;
+┌────────────┬───────────┬───────────┬─────────┐
+│ CustomerId │ FirstName │ LastName  │ Country │
+├────────────┼───────────┼───────────┼─────────┤
+│ 12         │ Roberto   │ Almeida   │ Brazil  │
+│ 1          │ Luís      │ Gonçalves │ Brazil  │
+│ 10         │ Eduardo   │ Martins   │ Brazil  │
+│ 13         │ Fernanda  │ Ramos     │ Brazil  │
+│ 11         │ Alexandre │ Rocha     │ Brazil  │
+└────────────┴───────────┴───────────┴─────────┘
+===================================================================================== 
+25:
+обидва запити дадуть однаковий результат. Як на мене, другий варіант кращий, бо якщо більше варіантів країн обирати, запит вийде дуже довгий
+sqlite> select CustomerId, FirstName, LastName, Country from customers where Country like 'Brazil' or Country like 'India' order by CustomerId;
+sqlite> select CustomerId, FirstName, LastName, Country from customers where Country in ('Brazil', 'India') order by CustomerId;
+┌────────────┬───────────┬────────────┬─────────┐
+│ CustomerId │ FirstName │  LastName  │ Country │
+├────────────┼───────────┼────────────┼─────────┤
+│ 1          │ Luís      │ Gonçalves  │ Brazil  │
+│ 10         │ Eduardo   │ Martins    │ Brazil  │
+│ 11         │ Alexandre │ Rocha      │ Brazil  │
+│ 12         │ Roberto   │ Almeida    │ Brazil  │
+│ 13         │ Fernanda  │ Ramos      │ Brazil  │
+│ 58         │ Manoj     │ Pareek     │ India   │
+│ 59         │ Puja      │ Srivastava │ India   │
+└────────────┴───────────┴────────────┴─────────┘
+=====================================================================================
+=====================================================================================
+=====================================================================================
+3
+1:
+sqlite> select FirstName, LastName, HireDate from employees order by HireDate desc limit 1;
+┌───────────┬──────────┬─────────────────────┐
+│ FirstName │ LastName │      HireDate       │
+├───────────┼──────────┼─────────────────────┤
+│ Laura     │ Callahan │ 2004-03-04 00:00:00 │
+└───────────┴──────────┴─────────────────────┘
+Останню найняли Лауру Каллаган
+=====================================================================================
+2:
+sqlite> select FirstName, LastName, BirthDate from employees order by BirthDate desc limit 1;
+┌───────────┬──────────┬─────────────────────┐
+│ FirstName │ LastName │      BirthDate      │
+├───────────┼──────────┼─────────────────────┤
+│ Jane      │ Peacock  │ 1973-08-29 00:00:00 │
+└───────────┴──────────┴─────────────────────┘
+Джейн Пікок наймолодша
+=====================================================================================
+3:
+Список клієнтів і їхніх менеджерів
+sqlite> select cl.firstname, cl.lastname, cl.SupportRepId, mn.firstname, mn.lastname from customers cl inner join employees mn on mn.EmployeeId == cl.SupportRepId;
+┌───────────┬──────────────┬──────────────┬───────────┬──────────┐
+│ FirstName │   LastName   │ SupportRepId │ FirstName │ LastName │
+├───────────┼──────────────┼──────────────┼───────────┼──────────┤
+│ Luís      │ Gonçalves    │ 3            │ Jane      │ Peacock  │
+│ Leonie    │ Köhler       │ 5            │ Steve     │ Johnson  │
+│ François  │ Tremblay     │ 3            │ Jane      │ Peacock  │
+│ Bjørn     │ Hansen       │ 4            │ Margaret  │ Park     │
+│ František │ Wichterlová  │ 4            │ Margaret  │ Park     │
+│ Helena    │ Holý         │ 5            │ Steve     │ Johnson  │
+│ Astrid    │ Gruber       │ 5            │ Steve     │ Johnson  │
+│ Daan      │ Peeters      │ 4            │ Margaret  │ Park     │
+│ Kara      │ Nielsen      │ 4            │ Margaret  │ Park     │
+│ Eduardo   │ Martins      │ 4            │ Margaret  │ Park     │
+│ Alexandre │ Rocha        │ 5            │ Steve     │ Johnson  │
+│ Roberto   │ Almeida      │ 3            │ Jane      │ Peacock  │
+│ Fernanda  │ Ramos        │ 4            │ Margaret  │ Park     │
+│ Mark      │ Philips      │ 5            │ Steve     │ Johnson  │
+│ Jennifer  │ Peterson     │ 3            │ Jane      │ Peacock  │
+│ Frank     │ Harris       │ 4            │ Margaret  │ Park     │
+│ Jack      │ Smith        │ 5            │ Steve     │ Johnson  │
+│ Michelle  │ Brooks       │ 3            │ Jane      │ Peacock  │
+│ Tim       │ Goyer        │ 3            │ Jane      │ Peacock  │
+│ Dan       │ Miller       │ 4            │ Margaret  │ Park     │
+│ Kathy     │ Chase        │ 5            │ Steve     │ Johnson  │
+│ Heather   │ Leacock      │ 4            │ Margaret  │ Park     │
+│ John      │ Gordon       │ 4            │ Margaret  │ Park     │
+│ Frank     │ Ralston      │ 3            │ Jane      │ Peacock  │
+│ Victor    │ Stevens      │ 5            │ Steve     │ Johnson  │
+│ Richard   │ Cunningham   │ 4            │ Margaret  │ Park     │
+│ Patrick   │ Gray         │ 4            │ Margaret  │ Park     │
+│ Julia     │ Barnett      │ 5            │ Steve     │ Johnson  │
+│ Robert    │ Brown        │ 3            │ Jane      │ Peacock  │
+│ Edward    │ Francis      │ 3            │ Jane      │ Peacock  │
+│ Martha    │ Silk         │ 5            │ Steve     │ Johnson  │
+│ Aaron     │ Mitchell     │ 4            │ Margaret  │ Park     │
+│ Ellie     │ Sullivan     │ 3            │ Jane      │ Peacock  │
+│ João      │ Fernandes    │ 4            │ Margaret  │ Park     │
+│ Madalena  │ Sampaio      │ 4            │ Margaret  │ Park     │
+│ Hannah    │ Schneider    │ 5            │ Steve     │ Johnson  │
+│ Fynn      │ Zimmermann   │ 3            │ Jane      │ Peacock  │
+│ Niklas    │ Schröder     │ 3            │ Jane      │ Peacock  │
+│ Camille   │ Bernard      │ 4            │ Margaret  │ Park     │
+│ Dominique │ Lefebvre     │ 4            │ Margaret  │ Park     │
+│ Marc      │ Dubois       │ 5            │ Steve     │ Johnson  │
+│ Wyatt     │ Girard       │ 3            │ Jane      │ Peacock  │
+│ Isabelle  │ Mercier      │ 3            │ Jane      │ Peacock  │
+│ Terhi     │ Hämäläinen   │ 3            │ Jane      │ Peacock  │
+│ Ladislav  │ Kovács       │ 3            │ Jane      │ Peacock  │
+│ Hugh      │ O'Reilly     │ 3            │ Jane      │ Peacock  │
+│ Lucas     │ Mancini      │ 5            │ Steve     │ Johnson  │
+│ Johannes  │ Van der Berg │ 5            │ Steve     │ Johnson  │
+│ Stanisław │ Wójcik       │ 4            │ Margaret  │ Park     │
+│ Enrique   │ Muñoz        │ 5            │ Steve     │ Johnson  │
+│ Joakim    │ Johansson    │ 5            │ Steve     │ Johnson  │
+│ Emma      │ Jones        │ 3            │ Jane      │ Peacock  │
+│ Phil      │ Hughes       │ 3            │ Jane      │ Peacock  │
+│ Steve     │ Murray       │ 5            │ Steve     │ Johnson  │
+│ Mark      │ Taylor       │ 4            │ Margaret  │ Park     │
+│ Diego     │ Gutiérrez    │ 4            │ Margaret  │ Park     │
+│ Luis      │ Rojas        │ 5            │ Steve     │ Johnson  │
+│ Manoj     │ Pareek       │ 3            │ Jane      │ Peacock  │
+│ Puja      │ Srivastava   │ 3            │ Jane      │ Peacock  │
+└───────────┴──────────────┴──────────────┴───────────┴──────────┘
+=====================================================================================
+4:
+sqlite> select * from customers where SupportRepId is null;
+клієнтів без менеджерів немає
+=====================================================================================
+5:
+менеджери без клієнтів
+sqlite> select mn.EmployeeId, mn.firstname, mn.lastname from employees mn left join customers cl on mn.EmployeeId == cl.SupportRepId where cl.supportrepid is null;
+┌────────────┬───────────┬──────────┐
+│ EmployeeId │ FirstName │ LastName │
+├────────────┼───────────┼──────────┤
+│ 1          │ Andrew    │ Adams    │
+│ 2          │ Nancy     │ Edwards  │
+│ 6          │ Michael   │ Mitchell │
+│ 7          │ Robert    │ King     │
+│ 8          │ Laura     │ Callahan │
+└────────────┴───────────┴──────────┘
+=====================================================================================
+*************************************************************************************
+1:
+Найбільше альбомів ууууу.... барабанний дріб..
+sqlite> select albums.ArtistId, count(albums.title) total_albums, name from albums inner join artists on artists.ArtistId = albums.ArtistId group by albums.artistid order by total_albums desc limit 1;
+┌──────────┬──────────────┬─────────────┐
+│ ArtistId │ total_albums │    Name     │
+├──────────┼──────────────┼─────────────┤
+│ 90       │ 21           │ Iron Maiden │
+└──────────┴──────────────┴─────────────┘
+Iron Maiden !!!!!!!
+=====================================================================================
+2:
+ТОП-10
+sqlite> select albums.ArtistId, count(albums.title) total_albums, name from albums inner join artists on artists.ArtistId = albums.ArtistId group by albums.artistid order by total_albums desc limit 10;
+┌──────────┬──────────────┬─────────────────┐
+│ ArtistId │ total_albums │      Name       │
+├──────────┼──────────────┼─────────────────┤
+│ 90       │ 21           │ Iron Maiden     │
+│ 22       │ 14           │ Led Zeppelin    │
+│ 58       │ 11           │ Deep Purple     │
+│ 50       │ 10           │ Metallica       │
+│ 150      │ 10           │ U2              │
+│ 114      │ 6            │ Ozzy Osbourne   │
+│ 118      │ 5            │ Pearl Jam       │
+│ 21       │ 4            │ Various Artists │
+│ 82       │ 4            │ Faith No More   │
+│ 84       │ 4            │ Foo Fighters    │
+└──────────┴──────────────┴─────────────────┘
+####################################################################################
+
+ТОП - 10 замовлень:
+Перший варіант порахувати всі позиці у інфойс айтемс і відсортувати суму:
+sqlite> select invoiceid, count(invoiceid) invoices, sum(unitprice) total from invoice_items group by invoiceid order by total desc limit 10;
+┌───────────┬──────────┬───────┐
+│ InvoiceId │ invoices │ total │
+├───────────┼──────────┼───────┤
+│ 404       │ 14       │ 25.86 │
+│ 299       │ 14       │ 23.86 │
+│ 96        │ 14       │ 21.86 │
+│ 194       │ 14       │ 21.86 │
+│ 201       │ 14       │ 18.86 │
+│ 89        │ 14       │ 18.86 │
+│ 88        │ 9        │ 17.91 │
+│ 306       │ 14       │ 16.86 │
+│ 313       │ 14       │ 16.86 │
+│ 103       │ 14       │ 15.86 │
+└───────────┴──────────┴───────┘
+Другий варіант простіший - просто сортуємо таблицю інвойсес по тоталу: 
+sqlite> select InvoiceId, CustomerId, Total FROM invoices  order by total desc limit 10;
+┌───────────┬────────────┬───────┐
+│ InvoiceId │ CustomerId │ Total │
+├───────────┼────────────┼───────┤
+│ 404       │ 6          │ 25.86 │
+│ 299       │ 26         │ 23.86 │
+│ 96        │ 45         │ 21.86 │
+│ 194       │ 46         │ 21.86 │
+│ 89        │ 7          │ 18.86 │
+│ 201       │ 25         │ 18.86 │
+│ 88        │ 57         │ 17.91 │
+│ 306       │ 5          │ 16.86 │
+│ 313       │ 43         │ 16.86 │
+│ 103       │ 24         │ 15.86 │
+└───────────┴────────────┴───────┘
+Перелік меломантів-шопоголіків:
+sqlite> select invoices.InvoiceId, invoices.CustomerId, customers.firstname, customers.lastname, invoices.Total FROM invoices inner join customers on customers.customerid = invoices.customerid order by invoices.total desc limit 10;
+┌───────────┬────────────┬───────────┬─────────────┬───────┐
+│ InvoiceId │ CustomerId │ FirstName │  LastName   │ Total │
+├───────────┼────────────┼───────────┼─────────────┼───────┤
+│ 404       │ 6          │ Helena    │ Holý        │ 25.86 │
+│ 299       │ 26         │ Richard   │ Cunningham  │ 23.86 │
+│ 96        │ 45         │ Ladislav  │ Kovács      │ 21.86 │
+│ 194       │ 46         │ Hugh      │ O'Reilly    │ 21.86 │
+│ 89        │ 7          │ Astrid    │ Gruber      │ 18.86 │
+│ 201       │ 25         │ Victor    │ Stevens     │ 18.86 │
+│ 88        │ 57         │ Luis      │ Rojas       │ 17.91 │
+│ 306       │ 5          │ František │ Wichterlová │ 16.86 │
+│ 313       │ 43         │ Isabelle  │ Mercier     │ 16.86 │
+│ 208       │ 4          │ Bjørn     │ Hansen      │ 15.86 │
+└───────────┴────────────┴───────────┴─────────────┴───────┘
+
+
+
+
+
+
+
+
+
+
+
+
+
