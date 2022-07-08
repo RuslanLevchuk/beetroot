@@ -1,0 +1,132 @@
+1:
+середня зарплатня
+sqlite> select avg(salary) average from sotr;
+┌─────────┐
+│ average │
+├─────────┤
+│ 94872.0 │
+└─────────┘
+=====================================================================================
+2:
+топ 10 заплат + пронумерував для краси:
+sqlite> select row_number() over (order by salary desc) num, name, salary, position_title from sotr limit 10;
+┌─────┬────────────────────────┬──────────┬──────────────────────────────────────────────────────────────┐
+│ num │          name          │  salary  │                        position_title                        │
+├─────┼────────────────────────┼──────────┼──────────────────────────────────────────────────────────────┤
+│ 1   │ 'House, Mark S.'       │ 187100.0 │ 'SENIOR POLICY ADVISOR'                                      │
+├─────┼────────────────────────┼──────────┼──────────────────────────────────────────────────────────────┤
+│ 2   │ 'Bannon, Stephen K.'   │ 179700.0 │ 'ASSISTANT TO THE PRESIDENT AND CHIEF STRATEGIST AND SENIOR  │
+│     │                        │          │ COUNSELOR'                                                   │
+├─────┼────────────────────────┼──────────┼──────────────────────────────────────────────────────────────┤
+│ 3   │ 'Bossert, Thomas P.'   │ 179700.0 │ 'ASSISTANT TO THE PRESIDENT FOR HOMELAND SECURITY AND COUNTE │
+│     │                        │          │ RTERRORISM'                                                  │
+├─────┼────────────────────────┼──────────┼──────────────────────────────────────────────────────────────┤
+│ 4   │ 'Bremberg, Andrew P.'  │ 179700.0 │ 'ASSISTANT TO THE PRESIDENT AND DIRECTOR OF THE DOMESTIC POL │
+│     │                        │          │ ICY COUNCIL'                                                 │
+├─────┼────────────────────────┼──────────┼──────────────────────────────────────────────────────────────┤
+│ 5   │ 'Conway, Kellyanne E.' │ 179700.0 │ 'ASSISTANT TO THE PRESIDENT AND SENIOR COUNSELOR'            │
+├─────┼────────────────────────┼──────────┼──────────────────────────────────────────────────────────────┤
+│ 6   │ 'Dearborn, Ricky A.'   │ 179700.0 │ 'ASSISTANT TO THE PRESIDENT AND DEPUTY CHIEF OF STAFF FOR LE │
+│     │                        │          │ GISLATIVE, CABINET, INTERGOVERNMENTAL AFFAIRS AND IMPLEMENTA │
+│     │                        │          │ TION'                                                        │
+├─────┼────────────────────────┼──────────┼──────────────────────────────────────────────────────────────┤
+│ 7   │ 'DeStefano, John J.'   │ 179700.0 │ 'ASSISTANT TO THE PRESIDENT AND DIRECTOR OF PRESIDENTIAL PER │
+│     │                        │          │ SONNEL'                                                      │
+├─────┼────────────────────────┼──────────┼──────────────────────────────────────────────────────────────┤
+│ 8   │ 'Greenblatt, Jason D.' │ 179700.0 │ 'ASSISTANT TO THE PRESIDENT AND SPECIAL REPRESENTATIVE FOR I │
+│     │                        │          │ NTERNATIONAL NEGOTIATIONS'                                   │
+├─────┼────────────────────────┼──────────┼──────────────────────────────────────────────────────────────┤
+│ 9   │ 'Hagin, Joseph W.'     │ 179700.0 │ 'ASSISTANT TO THE PRESIDENT AND DEPUTY CHIEF OF STAFF FOR OP │
+│     │                        │          │ ERATIONS'                                                    │
+├─────┼────────────────────────┼──────────┼──────────────────────────────────────────────────────────────┤
+│ 10  │ 'Hicks, Hope C.'       │ 179700.0 │ 'ASSISTANT TO THE PRESIDENT AND DIRECTOR OF STRATEGIC COMMUN │
+│     │                        │          │ ICATIONS'                                                    │
+└─────┴────────────────────────┴──────────┴──────────────────────────────────────────────────────────────┘
+=====================================================================================
+3:
+sqlite> select count(*) total_datailee from sotr where status  = 'Detailee';
+┌────────────────┐
+│ total_datailee │
+├────────────────┤
+│ 18             │
+└────────────────┘
+=====================================================================================
+4:
+staff_assistant - 18. Соупаденіє? Не думау...
+sqlite> select count(*) staff_assistant  from sotr where position_title = 'STAFF ASSISTANT';
+┌─────────────────┐
+│ staff_assistant │
+├─────────────────┤
+│ 18              │
+└─────────────────┘
+=====================================================================================
+5:
+Їх середня зарплата:
+sqlite> select floor(avg(salary)) avg_salary_staff_assistant from sotr where position_title = 'STAFF ASSISTANT';
+┌────────────────────────────┐
+│ avg_salary_staff_assistant │
+├────────────────────────────┤
+│ 48611.0                    │
+└────────────────────────────┘
+=====================================================================================
+6: 
+кількість посад
+sqlite> select row_number() over (order by position_title) num, position_title from sotr group by position_title;
+┌─────┬──────────────────────────────────────────────────────────────┐
+│ num │                        position_title                        │
+├─────┼──────────────────────────────────────────────────────────────┤
+│ 1   │ ' DEPUTY ASSISTANT TO THE PRESIDENT AND DEPUTY DIRECTOR OF T │
+│     │ HE NATIONAL ECONOMIC COUNCIL AND INTERNATIONAL ECONOMIC AFFA │
+│     │ IRS'                                                         │
+├─────┼──────────────────────────────────────────────────────────────┤
+│ 2   │ 'ADVISOR TO THE PRESS SECRETARY'                             │
+├─────┼──────────────────────────────────────────────────────────────┤
+.
+.
+.
+├─────┼──────────────────────────────────────────────────────────────┤
+│ 214 │ 'WEST WING RECEPTIONIST'                                     │
+├─────┼──────────────────────────────────────────────────────────────┤
+│ 215 │ 'WRITER FOR CORRESPONDENCE'                                  │
+└─────┴──────────────────────────────────────────────────────────────┘
+sqlite> select row_number() over (order by position_title) total_positions from sotr group by position_title order by total_positions desc limit 1;
+┌─────────────────┐
+│ total_positions │
+├─────────────────┤
+│ 215             │
+└─────────────────┘
+щоб дізнатись коротким виводом кількість посад
+
+
+=====================================================================================
+7:
+Кількість працівників на кожній з посад
+sqlite> select count(position_title) count, position_title from sotr group by position_title order by count desc;
+┌───────┬──────────────────────────────────────────────────────────────┐
+│ count │                        position_title                        │
+├───────┼──────────────────────────────────────────────────────────────┤
+│ 20    │ 'EXECUTIVE ASSISTANT'                                        │
+├───────┼──────────────────────────────────────────────────────────────┤
+│ 18    │ 'STAFF ASSISTANT'                                            │
+├───────┼──────────────────────────────────────────────────────────────┤
+│ 17    │ 'ASSOCIATE DIRECTOR'                                         │
+├───────┼──────────────────────────────────────────────────────────────┤
+....
+....
+
+├───────┼──────────────────────────────────────────────────────────────┤
+│ 1     │ ' DEPUTY ASSISTANT TO THE PRESIDENT AND DEPUTY DIRECTOR OF T │
+│       │ HE NATIONAL ECONOMIC COUNCIL AND INTERNATIONAL ECONOMIC AFFA │
+│       │ IRS'                                                         │
+└───────┴──────────────────────────────────────────────────────────────┘
+Я табличку обрізав)))
+
+
+
+
+
+
+
+
+
+
